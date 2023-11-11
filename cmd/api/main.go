@@ -28,7 +28,6 @@ func (a *app) Engine() *gin.Engine {
 
 func main() {
 	envConfig := config.NewConfig()
-	fmt.Printf("%+v", envConfig)
 
 	appConfig := &app{}
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?parseTime=true", envConfig.DBUsername, envConfig.DBPassword, envConfig.DBName))
@@ -45,6 +44,8 @@ func main() {
 	srv.Engine().GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "ok"})
 	})
+
+	appConfig.engine.Use(gin.Logger())
 
 	customerModule := &customer.Module{}
 	customerModule.StartUp(context.Background(), appConfig)

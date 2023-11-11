@@ -2,7 +2,7 @@ run:
 	@go run ./...
 
 db_up:
-	@rm -rf data/ && docker-compose up -d
+	@docker-compose up -d
 
 db_down:
-	@docker-compose down --volumes
+	@docker-compose down --volumes && rm -rf ./data

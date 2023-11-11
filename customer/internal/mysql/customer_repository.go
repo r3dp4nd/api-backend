@@ -39,7 +39,6 @@ func (c CustomerRepository) FindAll(ctx context.Context) ([]*domain.Customer, er
 	var customers []*domain.Customer
 
 	for rows.Next() {
-		fmt.Printf("%+v", rows)
 		var customer = &domain.Customer{}
 		//rows.Scan(&customer.DNI, &customer.Name, &customer.LastName, &customer.Telephone, &customer.Email,
 		//	&customer.BirthDate, &customer.City)
@@ -49,8 +48,6 @@ func (c CustomerRepository) FindAll(ctx context.Context) ([]*domain.Customer, er
 		customers = append(customers, customer)
 
 	}
-
-	fmt.Printf("%+v\n", customers)
 
 	return customers, nil
 
@@ -68,7 +65,6 @@ func (c CustomerRepository) Find(ctx context.Context, dni string) (*domain.Custo
 }
 
 func (c CustomerRepository) Update(ctx context.Context, customer *domain.Customer) (*domain.Customer, error) {
-	fmt.Printf("%+v", customer)
 	const query = `UPDATE customers SET name = ?, last_name = ?, telephone = ?, email = ?, birthdate = ?,
         city_id = ?, enabled = ? WHERE dni = ?`
 	_, err := c.db.ExecContext(ctx, query, customer.Name, customer.LastName, customer.Telephone,

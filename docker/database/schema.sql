@@ -1,10 +1,7 @@
-DROP
-DATABASE IF EXISTS mydatabase;
-CREATE
-DATABASE IF NOT EXISTS mydatabase;
+DROP DATABASE IF EXISTS mydatabase;
+CREATE DATABASE IF NOT EXISTS mydatabase;
 
-USE
-mydatabase;
+USE mydatabase;
 
 DROP TABLE IF EXISTS cities;
 CREATE TABLE cities
@@ -58,6 +55,6 @@ VALUES ('Amazonas'),
        ('Tumbes'),
        ('Ucayali');
 
-INSERT INTO customers (dni, name, last_name, telephone, email, birthdate, city_id, enabled)
+INSERT INTO customers (dni, name, last_name, telephone, email, birthdate, city_id)
 VALUES ('28282801', 'pedro1', 'lazo', '999782882', 'pedro@mail.com', '1994-06-20', 1),
        ('28282802', 'pedro1', 'lazo', '999782882', 'pedro@mail.com', '1994-06-20', 1);

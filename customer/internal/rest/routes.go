@@ -29,7 +29,6 @@ func RegisterRoutes(engine *gin.Engine, application application.Application) {
 		registerCustomer := dtos.RegisterCustomer{}
 		err := ctx.ShouldBindJSON(&registerCustomer)
 		if err != nil {
-			fmt.Printf("%+v", err.Error())
 			var ve validator.ValidationErrors
 			if errors.As(err, &ve) {
 				out := make([]ErrorMsg, len(ve))
