@@ -18,7 +18,7 @@ func (m *Module) StartUp(ctx context.Context, config config.AppConfig) error {
 
 	app := application.NewApplication(customerRepository, cityRepository)
 
-	rest.RegisterRoutes(config.Engine(), app)
+	rest.RegisterRoutes(ctx, config.Engine(), app)
 
 	return nil
 }

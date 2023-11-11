@@ -15,14 +15,14 @@ var (
 const minAge = 18
 
 type Customer struct {
-	DNI       string
-	Name      string
-	LastName  string
-	Telephone string
-	Email     string
-	BirthDate *time.Time
-	City      string
-	Enabled   bool
+	DNI       string     `json:"dni"`
+	Name      string     `json:"name"`
+	LastName  string     `json:"lastName"`
+	Telephone string     `json:"telephone"`
+	Email     string     `json:"email"`
+	BirthDate *time.Time `json:"birthDate" `
+	City      string     `json:"city"`
+	Enabled   bool       `json:"enabled,omitempty"`
 }
 
 func RegisterCustomer(dni, name, lastName, telephone string, email string, birthDate string, city string) (*Customer, error) {
