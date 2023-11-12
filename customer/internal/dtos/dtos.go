@@ -15,7 +15,7 @@ type GetCustomer struct {
 }
 
 type UpdateCustomer struct {
-	DNI       string `json:"dni" binding:"min=8,max=8"`
+	DNI       string `json:"dni"`
 	Name      string `json:"name"`
 	LastName  string `json:"lastName"`
 	Telephone string `json:"telephone"`

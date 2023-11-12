@@ -10,6 +10,7 @@ var (
 	ErrDNICannotBlank         = errors.New(`the customer DNI cannot be blank`)
 	ErrCustomerIsNotOldEnough = errors.New("the customer is not old enough")
 	ErrEmailIsInvalid         = errors.New("the customer email is invalid")
+	ErrAgeNotAllow            = errors.New("the age is not allow")
 )
 
 const minAge = 18
@@ -32,7 +33,7 @@ func RegisterCustomer(dni, name, lastName, telephone string, email string, birth
 
 	parseTime, err := time.Parse(time.DateOnly, birthDate)
 	if err != nil {
-		return nil, errors.New("format incorrect")
+		return nil, ErrAgeNotAllow
 	}
 
 	if helper.IsValidAge(parseTime, minAge) {

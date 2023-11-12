@@ -7,6 +7,7 @@ import (
 	"github.com/r3dp4nd/api-backend/customer"
 	"github.com/r3dp4nd/api-backend/internal/server"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 
@@ -41,11 +42,9 @@ func main() {
 
 	appConfig.engine = srv.Engine()
 
-	srv.Engine().GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "ok"})
-	})
-
-	appConfig.engine.Use(gin.Logger())
+	appConfig.engine.Use(gin.Logger(), cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+	}))
 
 	customerModule := &customer.Module{}
 	customerModule.StartUp(context.Background(), appConfig)

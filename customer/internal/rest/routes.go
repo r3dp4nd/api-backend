@@ -25,7 +25,9 @@ func RegisterRoutes(ctx context.Context, engine *gin.Engine, application applica
 			}
 
 			c.JSON(http.StatusOK, gin.H{
-				"data": customers,
+				"errors": err,
+				"data":   customers,
+				"code":   http.StatusOK,
 			})
 		})
 
@@ -39,10 +41,18 @@ func RegisterRoutes(ctx context.Context, engine *gin.Engine, application applica
 					for i, fe := range ve {
 						out[i] = ErrorMsg{fe.Field(), getErrorMsg(fe)}
 					}
-					c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
+					c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+						"errors": out,
+						"data":   struct{}{},
+						"code":   http.StatusBadRequest,
+					})
 				}
 
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"errors": err.Error(),
+					"data":   struct{}{},
+					"code":   http.StatusBadRequest},
+				)
 				return
 			}
 
@@ -56,18 +66,38 @@ func RegisterRoutes(ctx context.Context, engine *gin.Engine, application applica
 			}
 
 			c.JSON(http.StatusCreated, gin.H{
-				"data": "",
+				"errors": err,
+				"data":   struct{}{},
+				"code":   http.StatusCreated,
 			})
 		})
 
-		group.PUT("/customer/:dni", func(ctx *gin.Context) {
-			customers, err := application.GetAllCustomers(ctx.Request.Context())
+		group.PUT("/customer/:dni", func(c *gin.Context) {
+			dni := c.Param("dni")
+			updateCustomer := dtos.UpdateCustomer{}
+			err := c.ShouldBindJSON(&updateCustomer)
+			if err != nil {
+				var ve validator.ValidationErrors
+				if errors.As(err, &ve) {
+					out := make([]ErrorMsg, len(ve))
+					for i, fe := range ve {
+						out[i] = ErrorMsg{fe.Field(), getErrorMsg(fe)}
+					}
+					c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": out})
+				}
+
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
+				return
+			}
+			application.UpdateCustomer(ctx, dni, updateCustomer)
 			if err != nil {
 				return
 			}
 
-			ctx.JSON(http.StatusCreated, gin.H{
-				"data": customers,
+			c.JSON(http.StatusOK, gin.H{
+				"errors": err,
+				"data":   struct{}{},
+				"code":   http.StatusOK,
 			})
 		})
 
@@ -79,18 +109,23 @@ func RegisterRoutes(ctx context.Context, engine *gin.Engine, application applica
 				return
 			}
 
-			c.JSON(http.StatusOK, struct {
-			}{})
+			c.JSON(http.StatusOK, gin.H{
+				"errors": err,
+				"data":   struct{}{},
+				"code":   http.StatusOK,
+			})
 		})
 
 		group.GET("/city", func(c *gin.Context) {
-			customers, err := application.GetCities(ctx)
+			cities, err := application.GetCities(ctx)
 			if err != nil {
 				return
 			}
 
 			c.JSON(http.StatusOK, gin.H{
-				"data": customers,
+				"errors": err,
+				"data":   cities,
+				"code":   http.StatusOK,
 			})
 		})
 	}
@@ -105,13 +140,13 @@ type ErrorMsg struct {
 func getErrorMsg(fe validator.FieldError) string {
 	switch fe.Tag() {
 	case "required":
-		return "This field is required"
+		return "El campo es requerido"
 	case "min":
-		return "Should be less than " + fe.Param()
+		return "El campo no la longitud necesaria de " + fe.Param()
 	case "max":
-		return "Should be greater than " + fe.Param()
+		return "El campo no la longitud necesaria de " + fe.Param()
 	case "email":
-		return "no cumple con el formato " + fe.Param()
+		return "El email es invalido" + fe.Param()
 	}
 	return "Unknown error"
 }

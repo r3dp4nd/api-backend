@@ -66,8 +66,8 @@ func (c CustomerRepository) Find(ctx context.Context, dni string) (*domain.Custo
 
 func (c CustomerRepository) Update(ctx context.Context, customer *domain.Customer) (*domain.Customer, error) {
 	const query = `UPDATE customers SET name = ?, last_name = ?, telephone = ?, email = ?, birthdate = ?,
-        city_id = ?, enabled = ? WHERE dni = ?`
+        city_id = ? WHERE dni = ?`
 	_, err := c.db.ExecContext(ctx, query, customer.Name, customer.LastName, customer.Telephone,
-		customer.Email, customer.BirthDate, customer.City, customer.Enabled, customer.DNI)
+		customer.Email, customer.BirthDate, customer.City, customer.DNI)
 	return customer, err
 }

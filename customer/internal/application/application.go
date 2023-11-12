@@ -19,6 +19,11 @@ func NewApplication(customerRepository domain.CustomerRepository, cityRepository
 }
 
 func (a Application) RegisterCustomer(ctx context.Context, customer dtos.RegisterCustomer) error {
+
+	_, err := a.GetCustomer(ctx, dtos.GetCustomer{DNI: customer.DNI})
+	if err == nil {
+		return errors.New("there is already a client with that DNI")
+	}
 	registerCustomer, err := domain.RegisterCustomer(customer.DNI, customer.Name, customer.LastName, customer.Telephone,
 		customer.Email, customer.BirthDate, customer.City)
 	if err != nil {
@@ -68,7 +73,7 @@ func (a Application) UpdateCustomer(ctx context.Context, customerDNI string, upd
 func (a Application) DeleteCustomer(ctx context.Context, deleteCustomer dtos.DeleteCustomer) error {
 	customer, err := a.customerRepository.Find(ctx, deleteCustomer.DNI)
 	if err != nil {
-		return err
+		return errors.New("the client does not exist")
 	}
 
 	if err = customer.Disable(); err != nil {
@@ -114,7 +119,7 @@ func customerPropsMap(customer *domain.Customer, updateCustomer dtos.UpdateCusto
 	if updateCustomer.BirthDate != "" {
 		parse, err := time.Parse(time.DateOnly, updateCustomer.BirthDate)
 		if err != nil {
-			return nil, errors.New("format incorrect")
+			return nil, domain.ErrAgeNotAllow
 		}
 		customer.BirthDate = &parse
 
